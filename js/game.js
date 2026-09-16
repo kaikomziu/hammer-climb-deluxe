@@ -12,7 +12,8 @@
   const MAX_SPEED = 2600;
   const PULL_STIFFNESS = 34;
   const MAX_PULL_PER_SUB = 20;
-  const PUSH_STIFFNESS = 55;
+  const PUSH_STIFFNESS = 16;
+  const MAX_PUSH_PER_SUB = 22;
   const ROTATE_SENS = 1.5;
   const SHOULDER_OFFSET = { x: 0, y: -6 };
 
@@ -157,8 +158,12 @@
         // ハンマーが地形にめり込もうとした反力(ポールを突いて体を押し出す)
         const diffx = desiredTipX - curTipX;
         const diffy = desiredTipY - curTipY;
-        body.vx -= diffx * PUSH_STIFFNESS * sub;
-        body.vy -= diffy * PUSH_STIFFNESS * sub;
+        const diffLen = Math.hypot(diffx, diffy);
+        if (diffLen > 0.01) {
+          const capped = Math.min(diffLen, MAX_PUSH_PER_SUB);
+          body.vx -= (diffx / diffLen) * capped * PUSH_STIFFNESS;
+          body.vy -= (diffy / diffLen) * capped * PUSH_STIFFNESS;
+        }
 
         // 出っ張りに引っかかり、腕の長さを超えた分だけ体を引き寄せる(フック)
         const tx = curTipX - shoulderX, ty = curTipY - shoulderY;
