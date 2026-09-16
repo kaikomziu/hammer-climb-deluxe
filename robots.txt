@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://kaikomziu.github.io/hammer-climb-deluxe/sitemap.xml

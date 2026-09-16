@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<title>HAMMER CLIMB DELUXE - ハンマー1本で山を登れ</title>
+<meta name="description" content="ハンマーを岩に引っかけて引っ張るだけの操作で、ひたすら理不尽な山を登る物理アクション。落ちたらまた下まで滑り落ちる。スマホ対応、続きからセーブ可能。">
+<link rel="canonical" href="https://kaikomziu.github.io/hammer-climb-deluxe/">
+<meta property="og:title" content="HAMMER CLIMB DELUXE - ハンマー1本で山を登れ">
+<meta property="og:description" content="ハンマーを引っかけて引っ張るだけの操作で山を登る、理不尽系物理アクション。落下注意。">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kaikomziu.github.io/hammer-climb-deluxe/">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23211a2c%22/><path d=%22M30 78 L30 40 Q30 28 50 28 Q70 28 70 40 L70 78 Z%22 fill=%22%23b96b3e%22 stroke=%22%235c3018%22 stroke-width=%223%22/><circle cx=%2250%22 cy=%2232%22 r=%2210%22 fill=%22%23f3caa0%22 stroke=%22%235c3018%22 stroke-width=%222%22/></svg>">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<div id="hud" class="hidden">
+  <div id="heightBadge">高度 <b>0.0%</b><span class="best">ベスト 0.0%</span></div>
+  <button id="pauseBtn" aria-label="一時停止">⏸</button>
+</div>
+
+<div id="toast"></div>
+
+<div id="titleScreen" class="overlay">
+  <div class="panel">
+    <h1>HAMMER CLIMB<span>D E L U X E</span></h1>
+    <p class="desc">ハンマー1本で、ひたすら山を登れ。<br>油断すると下まで真っ逆さま。</p>
+    <div id="continueRow" class="hidden">
+      <div class="saveinfo">つづきから: 高度 <b id="saveHeight">0%</b></div>
+      <button id="continueBtn" class="btn primary">つづきから</button>
+    </div>
+    <button id="newGameBtn" class="btn">さいしょから</button>
+    <div class="howto">
+      <p>画面をドラッグ(スマホは指で)してハンマーを振り回す。</p>
+      <p>岩に叩きつけたり引っかけたりして、体を持ち上げよう。</p>
+      <p>進んだ場所は自動でセーブされる。</p>
+    </div>
+    <label class="soundToggle"><input type="checkbox" id="soundCheck"> 効果音を鳴らす</label>
+  </div>
+</div>
+
+<div id="pauseScreen" class="overlay hidden">
+  <div class="panel">
+    <h2>一時停止</h2>
+    <button id="resumeBtn" class="btn primary">再開</button>
+    <button id="restartCheckpointBtn" class="btn">セーブ地点からやり直す</button>
+    <button id="restartAllBtn" class="btn danger">最初からやり直す</button>
+    <label class="soundToggle"><input type="checkbox" id="soundCheck2"> 効果音を鳴らす</label>
+  </div>
+</div>
+
+<div id="winScreen" class="overlay hidden">
+  <div class="panel">
+    <h2>🏆 登頂成功！</h2>
+    <p id="winTime"></p>
+    <button id="freeRoamBtn" class="btn primary">そのまま遊ぶ</button>
+    <button id="restartAllBtn2" class="btn">最初からもう一度</button>
+  </div>
+</div>
+
+<div id="confirmDialog" class="overlay hidden">
+  <div class="panel">
+    <p id="confirmText"></p>
+    <div class="row">
+      <button id="confirmNo" class="btn">キャンセル</button>
+      <button id="confirmYes" class="btn danger">はい</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/terrain.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>
