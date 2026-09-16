@@ -14,7 +14,6 @@
   const MAX_PULL_PER_SUB = 20;
   const PUSH_STIFFNESS = 16;
   const MAX_PUSH_PER_SUB = 22;
-  const ROTATE_SENS = 1.5;
   const SHOULDER_OFFSET = { x: 0, y: -6 };
 
   const terrain = Terrain.create();
@@ -62,32 +61,25 @@
   })();
 
   // ---------- 入力 ----------
-  // 絶対座標ではなく、ドラッグの「接線方向」の移動量でハンマーの角度を回す。
-  // これによりタッチでも狙いが不安定にならず、画面のどこを触っても回転できる。
-  const lastPointer = { x: 0, y: 0, valid: false };
-  function handlePointerMove(clientX, clientY) {
-    if (!lastPointer.valid) {
-      lastPointer.x = clientX; lastPointer.y = clientY; lastPointer.valid = true;
-      return;
-    }
-    const dxWorld = (clientX - lastPointer.x) / camScale;
-    const dyWorld = (clientY - lastPointer.y) / camScale;
-    lastPointer.x = clientX; lastPointer.y = clientY;
-    const tanx = -Math.sin(hammerAngle), tany = Math.cos(hammerAngle);
-    const arc = dxWorld * tanx + dyWorld * tany;
-    hammerAngle += (arc / HAMMER_LEN) * ROTATE_SENS;
+  // ハンマーは「今指(カーソル)がある方向」を常に直接向く(長さは固定)。
+  // ドラッグ量ではなく絶対位置から角度を決めるので、狙った場所に素直にハンマーが伸びる。
+  function handlePointerAt(clientX, clientY) {
+    const rect = canvas.getBoundingClientRect();
+    const a = anchorScreen();
+    const dx = (clientX - rect.left) - a.x;
+    const dy = (clientY - rect.top) - a.y;
+    if (dx * dx + dy * dy < 4) return; // カーソルが体のすぐ上にある間は角度を変えない(atan2の不定を避ける)
+    hammerAngle = Math.atan2(dy, dx);
   }
   canvas.style.touchAction = 'none';
   canvas.addEventListener('pointerdown', (e) => {
-    lastPointer.x = e.clientX; lastPointer.y = e.clientY; lastPointer.valid = true;
+    handlePointerAt(e.clientX, e.clientY);
     ensureAudio();
   }, { passive: true });
   window.addEventListener('pointermove', (e) => {
     if (gameState !== 'playing') return;
-    handlePointerMove(e.clientX, e.clientY);
+    handlePointerAt(e.clientX, e.clientY);
   }, { passive: true });
-  window.addEventListener('pointerup', () => { lastPointer.valid = false; });
-  window.addEventListener('pointercancel', () => { lastPointer.valid = false; });
 
   // ---------- 音 ----------
   let audioCtx = null;
